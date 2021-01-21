@@ -1,0 +1,9 @@
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/rebuild_cache.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/edit_cache.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/BelkanSG.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/Belkan.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/motorLib.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/GLUILib.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/comportamientosLib.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/modelosBelkanLib.dir
+/home/antonio/Descargas/Github/BelkanSG/CMakeFiles/obj3DLib.dir
