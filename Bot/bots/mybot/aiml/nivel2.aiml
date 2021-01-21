@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml>
+
+<!-- Dia especifico por la maniana o por la tarde-->
+<!-- -->
+<category>
+  <pattern>^ $cita el <set>number</set> de <set>month_es</set> por la *</pattern>
+  <template>
+    Muy bien voy a comprobarlo, espere un momento...
+    <think>
+      <set var="cuando"><star index="4"/></set>
+      <set name="fecha"><star index="2"/>-<map name="month_index_ES"><star index="3"/></map>-20</set>
+      <set var="contador">1</set>
+    </think>
+    <condition var="cuando">     <!-- Condicion para saber si quiere por la maniana o por la tarde -->
+      <li value="maniana">
+        <think>
+          <set var="horas">08:00 09:00 10:00 11:00 12:00 13:00</set>
+          <set var="ocupada">TRUE</set>
+        </think>
+        <condition var="ocupada">
+          <li value="FIN">
+            Lo siento no nos quedan citas disponibles, desea otro dia
+            <think><set name="topic">decision_5</set></think>
+          </li>
+          <li value="FALSE">
+            Le parece bien a las <get name="hora"/>
+            <think><set name="topic">decision_1</set></think>
+          </li>
+          <li value="TRUE">
+            <think>
+              <set name="hora"><srai>SELECTITEM <get var="contador"/> IN <get var="horas"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+              <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+              <set var="ocupada"><srai>IS BUSY DAY <get name="fecha"/> AT <get name="hora"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+              <condition name="hora">
+                <li value="13:00">
+                  <set var="ocupada">FIN</set>
+                </li>
+              </condition>
+            </think>
+            <loop/>
+          </li>
+        </condition>
+      </li>
+      <li value="tarde">
+        <think>
+          <set var="horas">13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00</set>
+          <set var="ocupada">TRUE</set>
+        </think>
+        <condition var="ocupada">
+          <li value="FIN">
+            Lo siento no nos quedan citas disponibles, desea otro dia
+            <think><set name="topic">decision_5</set></think>
+          </li>
+          <li value="FALSE">
+            Le parece bien a las <get name="hora"/>
+            <think><set name="topic">decision_1</set></think>
+          </li>
+          <li value="TRUE">
+            <think>
+              <set name="hora"><srai>SELECTITEM <get var="contador"/> IN <get var="horas"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+              <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+              <set var="ocupada"><srai>IS BUSY DAY <get name="fecha"/> AT <get name="hora"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+              <condition name="hora">
+                <li value="21:00">
+                  <set var="ocupada">FIN</set>
+                </li>
+              </condition>
+            </think>
+            <loop/>
+          </li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<!-- 2a opcion pedir una cita -->
+<!-- -->
+<category>
+  <pattern>^ cita para el <set>number</set> (de) <set>month_es</set> por la *</pattern>
+  <template><srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/> por la <star index="4"/></srai></template>
+</category>
+
+<category>
+  <pattern>^ cita para el <set>number</set> (de) <set>month_es</set> (de) <set>number</set> por la *</pattern>
+  <template><srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/> por la <star index="5"/></srai></template>
+</category>
+
+<topic name="decision_5">
+  <!-- Dia completo elegimos otro -->
+  <!-- -->
+  <category>
+    <pattern>si, ^ el <set>number</set> (de) <set>month_es</set> por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/> por la <star index="4"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>si, ^ el <set>number</set> (de) <set>month_es</set> (de) <set>number</set> por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/> por la <star index="5"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ (si) (para) el <set>number</set> (de) <set>month_es</set> por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/> por la <star index="4"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ el <set>number</set> (de) <set>month_es</set></pattern>
+    <template>
+      <think><set name="topic">decision_2</set></think>
+      <srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ (si) (para) el <set>number</set> (de) <set>month_es</set></pattern>
+    <template>
+      <think><set name="topic">decision_2</set></think>
+      <srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>si, (para) el <set>number</set> (de) <set>month_es</set></pattern>
+    <template>
+      <think><set name="topic">decision_2</set></think>
+      <srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/></srai>
+    </template>
+  </category>
+</topic>
+
+<!-- Dia especifico a una hora determinada -->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) el <set>number</set> (de) <set>month_es</set> a las *</pattern>
+  <template>
+    <think>
+      <set name="fecha"><map name="days_transform"><star index="2"/></map>-<map name="month_index_ES"><star index="3"/></map>-20</set>
+      <set name="hora"><star index="4"/></set>
+      <set var="ocupada"><srai>IS BUSY DAY <get name="fecha"/> AT <get name="hora"/></srai></set>
+    </think>
+    <condition var="ocupada">
+      <li value="TRUE">
+        Esa hora no esta disponible
+        <srai>el <map name="days_transform"><star index="2"/></map> de <star index="3"/></srai>
+      </li>
+      <li value="FALSE">
+        Aniadido a la agenda, hasta entonces
+        <think>
+          <srai>MARK OCUPADO AT <get name="hora"/> ON <get name="fecha"/></srai>
+        </think>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<!-- 2a opcion pedir una cita -->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) el <set>number</set> (de) <set>month_es</set> (de) <set>number</set> a las *</pattern>
+  <template><srai>cita el <map name="days_transform"><star index="2"/></map> de <star index="3"/> a las <star index="5"/></srai></template>
+</category>
+
+<!-- Cita para hoy-->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) hoy</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE</srai></srai></srai>
+  </template>
+</category>
+
+<!-- Cita para hoy por la tarde o por la maniana-->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) hoy por la *</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE</srai></srai> por la <star index="2"/></srai>
+  </template>
+</category>
+
+<!-- Cita para hoy a una hora determinada -->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) hoy a las *</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE</srai></srai> a las <star index="2"/></srai>
+  </template>
+</category>
+
+<!-- Cita para maniana-->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) maniana</pattern>
+  <template>
+    <srai>cita para el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE TOMORROW</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE TOMORROW</srai></srai></srai>
+  </template>
+</category>
+
+<!-- Cita para maniana por la tarde o por la maniana-->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) maniana por la *</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE TOMORROW</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE TOMORROW</srai></srai> por la <star index="2"/></srai>
+  </template>
+</category>
+
+<!-- Cita para maniana a una hora determinada -->
+<!-- -->
+<category>
+  <pattern>^ maniana a las *</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE TOMORROW</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE TOMORROW</srai></srai> a las <star index="2"/></srai>
+  </template>
+</category>
+
+<!-- Cita para maniana-->
+<!-- -->
+<category>
+  <pattern>^ (cita) (para) pasado maniana</pattern>
+  <template>
+    <srai>cita para el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DAYAFTERTOMORROWDATE</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DAYAFTERTOMORROWDATE</srai></srai></srai>
+  </template>
+</category>
+
+<!-- Cita para pasado maniana por la tarde o por la maniana-->
+<!-- -->
+<category>
+  <pattern>^ pasado maniana por la *</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DAYAFTERTOMORROWDATE</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DAYAFTERTOMORROWDATE</srai></srai> por la <star index="2"/></srai>
+  </template>
+</category>
+
+<!-- Cita para pasado maniana a una hora determinada -->
+<!-- -->
+<category>
+  <pattern>^ pasado maniana a las *</pattern>
+  <template>
+    <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DAYAFTERTOMORROWDATE</srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DAYAFTERTOMORROWDATE</srai></srai> a las <star index="2"/></srai>
+  </template>
+</category>
+
+<!-- Cita para este *dia semana* -->
+<!-- -->
+
+<category>
+  <pattern>^ (cita) (para) (el) proximo *</pattern>
+  <template>
+
+      <set var="dia_actual"><srai>DAY</srai></set>
+      <set var="iguales"><srai>COMPARE <star index="2"/> WITH <get var="dia_actual"/></srai></set>
+
+    <condition var="iguales">
+      <li value="YES">
+        <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE A WEEK FROM <star index="2"/></srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE A WEEK FROM <star index="2"/></srai></srai></srai>
+      </li>
+      <li value="NO">
+        <srai>cita el <map name="days_transform"><srai>SELECTITEM 1 IN <srai>DATE ON <star index="2"/></srai></srai></map> de <srai>SELECTITEM 2 IN <srai>DATE ON <star index="2"/></srai></srai></srai>
+      </li>
+    </condition>
+  </template>
+</category>
+<!--
+<category>
+  <pattern>^ si ^ el <set>number</set> (de) <set>month_es</set> por la *</pattern>
+  <that>De acuerdo, desea otro dia</that>
+  <template><srai>cita el <map name="days_transform"><star index="3"/></map> de <star index="4"/> por la <star index="5"/></srai></template>
+</category>
+
+<category>
+  <pattern>^ si ^ el dia <set>number</set> (de) <set>month_es</set> a las *</pattern>
+  <that>De acuerdo, desea otro dia</that>
+  <template><srai>cita el <map name="days_transform"><star index="3"/></map> de <star index="4"/> a las <star index="5"/></srai></template>
+</category>
+-->
+
+<!-- FUNCION DEL NIVEL1 PARA EL NIVEL2 -->
+<category>
+  <pattern>^ el <set>number</set> (de) <set>month_es</set></pattern>
+  <template>
+    <think>
+      <!-- Definiendo variables globales -->
+      <set var="horas_maniana">09:00 10:00 11:00 12:00 13:00</set>
+      <set var="horas_tarde">14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00</set>
+      <set name="fecha"><map name="days_transform"><star index="2"/></map>-<map name="month_index_ES"><star index="3"/></map>-20</set>
+      <!-- Inicializando variables del bucle -->
+      <set var="contador">1</set>
+      <set var="hora_maniana">08:00</set>
+      <set var="hora_tarde">13:00</set>
+      <set var="ocupada_maniana"><srai>IS BUSY DAY <get name="fecha"/> AT <get var="hora_maniana"/></srai></set>         <!-- Comprueba si la primera hora del dia eta ocupada y añade el resultado a la variable ocupada -->
+      <set var="ocupada_tarde"><srai>IS BUSY DAY <get name="fecha"/> AT <get var="hora_tarde"/></srai></set>
+      <set name="disponibles_maniana"></set>
+      <set name="disponibles_tarde"></set>
+      <set var="lista_vacia"></set>
+    </think>
+    <!-- Bucle para ver las horas disponibles de la maniana -->
+    <!--  -->
+    <condition var="ocupada_maniana">
+      <li value="FIN">
+        <think><set var="lista_vacia"><srai>COUNT <get name="disponibles_maniana"/></srai></set></think>
+        <condition var="lista_vacia">
+          <li value="0">
+            Ese dia por la maniana no nos quedan horas.
+          </li>
+          <li>
+            Ese dia las horas disponibles por la maniana son <get name="disponibles_maniana"/>.
+          </li>
+        </condition>
+      </li>
+      <li value="FALSE">
+        <think>
+          <set name="disponibles_maniana"><get name="disponibles_maniana"/> <get var="hora_maniana"/></set>
+          <set var="hora_maniana"><srai>SELECTITEM <get var="contador"/> IN <get var="horas_maniana"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+          <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+          <set var="ocupada_maniana"><srai>IS BUSY DAY <get name="fecha"/> AT <get var="hora_maniana"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+          <condition var="hora_maniana">
+            <li value="13:00">
+              <set var="ocupada_maniana">FIN</set>
+            </li>
+          </condition>
+        </think>
+        <loop/>
+      </li>
+      <li value="TRUE">      <!-- Si esta ocupada la hora no se aniade a la lista y se pasa al siguiente -->
+        <think>
+          <set var="hora_maniana"><srai>SELECTITEM <get var="contador"/> IN <get var="horas_maniana"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+          <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+          <set var="ocupada_maniana"><srai>IS BUSY DAY <get name="fecha"/> AT <get var="hora_maniana"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+          <condition var="hora_maniana">
+            <li value="13:00">
+              <set var="ocupada_maniana">FIN</set>
+            </li>
+          </condition>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <!-- Bucle para ver las horas disponibles de la tarde -->
+    <!--  -->
+    <think><set var="contador">1</set></think>
+    <condition var="ocupada_tarde">
+      <li value="FIN">
+        <think><set var="lista_vacia"><srai>COUNT <get name="disponibles_tarde"/></srai></set></think>
+        <condition var="lista_vacia">
+          <li value="0">
+            Y por la tarde no nos quedan horas, desea otro dia
+          </li>
+          <li>
+            Y por la tarde son <get name="disponibles_tarde"/>, cual desea
+          </li>
+        </condition>
+      </li>
+      <li value="FALSE">
+        <think>
+          <set name="disponibles_tarde"><get name="disponibles_tarde"/> <get var="hora_tarde"/></set>
+          <set var="hora_tarde"><srai>SELECTITEM <get var="contador"/> IN <get var="horas_tarde"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+          <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+          <set var="ocupada_tarde"><srai>IS BUSY DAY <get name="fecha"/> AT <get var="hora_tarde"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+          <condition var="hora_tarde">
+            <li value="21:00">
+              <set var="ocupada_tarde">FIN</set>
+            </li>
+          </condition>
+        </think>
+        <loop/>
+      </li>
+      <li value="TRUE">      <!-- Si esta ocupada la hora no se aniade a la lista y se pasa al siguiente -->
+        <think>
+          <set var="hora_tarde"><srai>SELECTITEM <get var="contador"/> IN <get var="horas_tarde"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+          <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+          <set var="ocupada_tarde"><srai>IS BUSY DAY <get name="fecha"/> AT <get var="hora_tarde"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+          <condition var="hora_tarde">
+            <li value="21:00">
+              <set var="ocupada_tarde">FIN</set>
+            </li>
+          </condition>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <think><set name="topic">decision_3</set></think>
+  </template>
+</category>
+
+</aiml>

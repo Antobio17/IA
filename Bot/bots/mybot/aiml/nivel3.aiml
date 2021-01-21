@@ -1,0 +1,1112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml>
+<category>
+  <pattern>^ concertar (una) cita</pattern>
+  <template>
+    Para cuando
+    <think><set name="topic">decision_6</set></think>
+  </template>
+</category>
+
+<category>
+  <pattern>^ pedir (una) cita</pattern>
+  <template>
+    <srai>concertar una cita</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>^ (una) cita</pattern>
+  <template>
+    <srai>concertar una cita</srai>
+  </template>
+</category>
+
+<topic name="decision_6">
+  <category>
+    <pattern>^ no (lo) se ^</pattern>
+    <template>
+      Le viene bien para esta semana
+      <think><set name="topic">decision_7</set></think>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ cuando (teneis) ^</pattern>
+    <template>
+      <srai>no se</srai>
+    </template>
+  </category>
+
+  <!-- Si al preguntarle para cuando dice la fecha exacta -->
+  <!-- -->
+  <category>
+    <pattern>^ el <set>number</set> (de) <set>month_es</set> (de) (<set>number</set>)</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita para el <star index="2"/> de <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ el dia <set>number</set> de <set>month_es</set> (de) (<set>number</set>)</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita para el <star index="2"/> de <star index="3"/></srai>
+    </template>
+  </category>
+
+  <!-- 2a opcion pedir una cita -->
+  <!-- -->
+  <category>
+    <pattern>^ (el) <set>number</set> (de) <set>month_es</set> por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <star index="2"/> de <star index="3"/> por la <star index="4"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ (el) <set>number</set> (de) <set>month_es</set> a las *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <star index="2"/> de <star index="3"/> a las <star index="4"/></srai>
+    </template>
+  </category>
+
+  <!-- Cita para hoy por la tarde o por la maniana-->
+  <!-- -->
+  <category>
+    <pattern>^ hoy por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <srai>DATE</srai></srai> de <srai>SELECTITEM 2 IN <srai>DATE</srai></srai> por la <star index="2"/></srai>
+    </template>
+  </category>
+
+  <!-- Cita para hoy a una hora determinada -->
+  <!-- -->
+  <category>
+    <pattern>^ hoy a las *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <srai>DATE</srai></srai> de <srai>SELECTITEM 2 IN <srai>DATE</srai></srai> a las <star index="2"/></srai>
+    </template>
+  </category>
+
+  <!-- Cita para maniana por la tarde o por la maniana-->
+  <!-- -->
+  <category>
+    <pattern>^ maniana por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <srai>DATE TOMORROW</srai></srai> de <srai>SELECTITEM 2 IN <srai>DATE TOMORROW</srai></srai> por la <star index="2"/></srai>
+    </template>
+  </category>
+
+  <!-- Cita para maniana a una hora determinada -->
+  <!-- -->
+  <category>
+    <pattern>^ maniana a las *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <srai>DATE TOMORROW</srai></srai> de <srai>SELECTITEM 2 IN <srai>DATE TOMORROW</srai></srai> a las <star index="2"/></srai>
+    </template>
+  </category>
+
+  <!-- Cita para pasado maniana por la tarde o por la maniana-->
+  <!-- -->
+  <category>
+    <pattern>^ pasado maniana por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <srai>DAYAFTERTOMORROWDATE</srai></srai> de <srai>SELECTITEM 2 IN <srai>DAYAFTERTOMORROWDATE</srai></srai> por la <star index="2"/></srai>
+    </template>
+  </category>
+
+  <!-- Cita para pasado maniana a una hora determinada -->
+  <!-- -->
+  <category>
+    <pattern>^ pasado maniana a las *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <srai>DAYAFTERTOMORROWDATE</srai></srai> de <srai>SELECTITEM 2 IN <srai>DAYAFTERTOMORROWDATE</srai></srai> a las <star index="2"/></srai>
+    </template>
+  </category>
+
+  <!-- PARA ESTA SEMANA -->
+  <category>
+    <pattern>^ esta semana ^</pattern>
+    <template>
+      <think>
+        <set var="FIN"><map name="successor"><map name="successor"><srai>DAYS UNTIL VIERNES</srai></map></map></set>
+        <set var="dia_semana"><srai>TOMORROW</srai></set>
+        <set name="fecha"><srai>DATE TOMORROW</srai></set>
+        <set var="dias_disponibles"></set>
+        <set var="contador">2</set>
+        <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+      </think>
+      <condition var="contador">
+        <li><value><get var="FIN"/></value>
+          <think><set var="vacia"><srai>VACIA <get var="dias_disponibles"/></srai></set></think>
+          <condition var="vacia">
+            <li value="TRUE">
+              No nos quedan dias esa semana, le viene bien la siguiente
+              <think><set name="topic">si_semana_2</set></think>
+            </li>
+            <li value="FALSE">
+              El <get var="dias_disponibles"/> estan disponibles, cual desea
+              <think><set name="topic">decision_8</set></think>
+            </li>
+          </condition>
+        </li>
+        <li>
+          <condition var="ocupado">
+            <li value="FALSE">
+              <think>
+                <set var="dias_disponibles"><get var="dias_disponibles"/> <get var="dia_semana"/></set>
+                <set var="dia_semana"><srai>WEEKDAY IN <get var="contador"/> DAYS</srai></set>
+                <set name="fecha"><srai>DATE ON <get var="dia_semana"/></srai></set>    <!-- MAPA -->
+                <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+                <set var="contador"><map name="successor"><get var="contador"/></map></set>
+              </think>
+            </li>
+            <li value="TRUE">
+              <think>
+                <set var="dia_semana"><srai>WEEKDAY IN <get var="contador"/> DAYS</srai></set>
+                <set name="fecha"><srai>DATE ON <get var="dia_semana"/></srai></set>
+                <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+                <set var="contador"><map name="successor"><get var="contador"/></map></set>
+              </think>
+            </li>
+          </condition>
+          <loop/>
+        </li>
+      </condition>
+    </template>
+  </category>
+
+  <!-- Para la semana que viene -->
+  <category>
+    <pattern>^ (siguiente) semana (que) (viene) ^</pattern>
+    <template>
+      <think>
+        <set var="FIN">5</set>
+        <set var="dia_semana">Lunes</set>
+        <set var="dias_semana">Lunes Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="dia_actual"><srai>DAY</srai></set>
+        <condition var="dia_actual">
+          <li value="lunes">
+            <set name="fecha"><srai>DATE A WEEK FROM Lunes</srai></set>
+            <set name="fecha_auxiliar"><get name="fecha"/></set>
+          </li>
+          <li>
+            <set name="fecha"><srai>DATE ON Lunes</srai></set>
+            <set name="fecha_auxiliar"><get name="fecha"/></set>
+          </li>
+        </condition>
+        <set var="dias_disponibles"></set>
+        <set var="contador">2</set>
+        <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+        <set var="nuevo_mes">0</set>
+      </think>
+
+      <condition var="ocupado">
+        <li value="FIN">
+          <think><set var="vacia"><srai>VACIA <get var="dias_disponibles"/></srai></set></think>
+          <condition var="vacia">
+            <li value="TRUE">
+              No nos quedan dias esa semana, le viene bien en 2 semanas
+              <think><set name="topic">si_semana_2</set></think>
+            </li>
+            <li value="FALSE">
+              El <get var="dias_disponibles"/> estan disponibles para la semana que viene, cual desea
+              <think><set name="topic">decision_9</set></think>
+            </li>
+          </condition>
+        </li>
+        <li value="FALSE">
+          <think>
+            <set var="dias_disponibles"><get var="dias_disponibles"/> <get var="dia_semana"/></set>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <condition var="nuevo_mes">
+              <li value="1">
+                <set var="num_mes"><srai>FINDITEM <srai>SELECTITEM 2 IN <get name="fecha"/></srai> IN <get var="meses"/></srai></set>
+                <set var="num_mes"><map name="successor"><get var="contador"/></map></set>
+                <set var="mes"><srai>SELECTITEM <get var="num_mes"/> IN <get var="meses"/></srai></set>
+                <set name="fecha">1 <map name="successor"><srai>SELECTITEM 2 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+              <li>
+                <set name="fecha"><map name="successor"><srai>SELECTITEM 1 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+            </condition>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+        <li value="TRUE">
+          <think>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <condition var="nuevo_mes">
+              <li value="1">
+                <set var="num_mes"><srai>FINDITEM <srai>SELECTITEM 2 IN <get name="fecha"/></srai> IN <get var="meses"/></srai></set>
+                <set var="num_mes"><map name="successor"><get var="contador"/></map></set>
+                <set var="mes"><srai>SELECTITEM <get var="num_mes"/> IN <get var="meses"/></srai></set>
+                <set name="fecha">1 <map name="successor"><srai>SELECTITEM 2 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+              <li>
+                <set name="fecha"><map name="successor"><srai>SELECTITEM 1 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+            </condition>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+      </condition>
+    </template>
+  </category>
+</topic>
+
+<topic name="decision_7">
+  <!-- SEMANA ACTUAL, SI LE VIENE BIEN -->
+  <!-- -->
+  <category>
+    <pattern>^ si ^</pattern>
+    <template>
+      <think>
+        <set var="FIN"><map name="successor"><map name="successor"><srai>DAYS UNTIL VIERNES</srai></map></map></set>
+        <set var="dia_semana"><srai>TOMORROW</srai></set>
+        <set name="fecha"><srai>DATE TOMORROW</srai></set>
+        <set var="dias_disponibles"></set>
+        <set var="contador">2</set>
+        <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+        <set var="dia_actual"><srai>DAY</srai></set>
+        <condition var="dia_actual">
+          <li value="Viernes">
+            <set var="contador"><get var="FIN"/></set>
+          </li>
+          <li value="Sabado">
+            <set var="contador"><get var="FIN"/></set>
+          </li>
+          <li value="Domingo">
+            <set var="contador"><get var="FIN"/></set>
+          </li>
+        </condition>
+      </think>
+      <condition var="contador">
+        <li><value><get var="FIN"/></value>
+          <think><set var="vacia"><srai>VACIA <get var="dias_disponibles"/></srai></set></think>
+          <condition var="vacia">
+            <li value="TRUE">
+              No nos quedan dias esa semana, le viene bien la siguiente
+              <think><set name="topic">si_semana_2</set></think>
+            </li>
+            <li value="FALSE">
+              El <get var="dias_disponibles"/> estan disponibles, cual desea
+              <think><set name="topic">decision_8</set></think>
+            </li>
+          </condition>
+        </li>
+        <li>
+          <condition var="ocupado">
+            <li value="FALSE">
+              <think>
+                <set var="dias_disponibles"><get var="dias_disponibles"/> <get var="dia_semana"/></set>
+                <set var="dia_semana"><srai>WEEKDAY IN <get var="contador"/> DAYS</srai></set>
+                <set name="fecha"><srai>DATE ON <get var="dia_semana"/></srai></set>    <!-- MAPA -->
+                <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+                <set var="contador"><map name="successor"><get var="contador"/></map></set>
+              </think>
+            </li>
+            <li value="TRUE">
+              <think>
+                <set var="dia_semana"><srai>WEEKDAY IN <get var="contador"/> DAYS</srai></set>
+                <set name="fecha"><srai>DATE ON <get var="dia_semana"/></srai></set>
+                <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+                <set var="contador"><map name="successor"><get var="contador"/></map></set>
+              </think>
+            </li>
+          </condition>
+          <loop/>
+        </li>
+      </condition>
+    </template>
+  </category>
+
+  <!-- SEMANA ACTUAL, NO LE VIENE BIEN, PROPONEMOS LA SIGUIENTE -->
+  <!-- -->
+  <category>
+    <pattern>^ no ^</pattern>
+    <template>
+      La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+</topic>
+
+<topic name="decision_8">
+  <!-- SEMANA ACTUAL, SI LE VIENE BIEN PERO LUEGO DICE QUE NO -->
+  <!-- -->
+  <category>
+    <pattern>^ no  puedo ^</pattern>
+    <template>La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ningun ^</pattern>
+    <template>La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ninguno ^</pattern>
+    <template>La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+
+  <!-- SEMANA ACTUAL, SI LE VIENE BIEN: ELEGIMOS DIA -->
+  <!-- -->
+  <category>
+    <pattern>^ <set>weekday_es</set> ^</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <think>
+        <set name="fecha"><srai>DATE ON <star index="2"/></srai></set>
+      </think>
+      <srai>cita para el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> por la *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <think>
+        <set name="fecha"><srai>DATE ON <star index="2"/></srai></set>
+      </think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> por la <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> a las *</pattern>
+    <template>
+      <think><set name="topic">unknow</set></think>
+      <think>
+        <set name="fecha"><srai>DATE ON <star index="2"/></srai></set>
+      </think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> a las <star index="3"/></srai>
+    </template>
+  </category>
+
+  <!-- SEMANA ACTUAL, SI LE VIENE BIEN PERO LUEGO DICE QUE NO -->
+  <!-- -->
+  <category>
+    <pattern>^ no  puedo ^</pattern>
+    <template>La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ningun ^</pattern>
+    <template>La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ninguno ^</pattern>
+    <template>La quiere para la siguiente
+      <think><set name="topic">si_semana_2</set></think>
+    </template>
+  </category>
+</topic>
+
+<!-- SEMANA ACTUAL, NO LE VIENE BIEN, LA SIGUIENTE SI-->
+<!-- -->
+<topic name="si_semana_2">
+  <!-- LA SEMANA SIGUIENTE TAMPOCO LE VIENE BIEN, PROPONEMOS OTRA -->
+  <!-- -->
+  <category>
+    <pattern>^ tampoco ^</pattern>
+    <template>
+      <think>
+        <set name="Lunes"><srai>LUNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>         <!-- FUNCION 2 -->
+        <set name="Viernes"><srai>VIERNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>     <!-- FUNCION 3 -->
+      </think>
+      <think><set name="topic">decision_11</set></think>
+      Pues ya tendria que ser para la semana del <get name="Lunes"/> al <get name="Viernes"/>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ no ^</pattern>
+    <template>
+      <think>
+        <set name="Lunes"><srai>LUNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>         <!-- FUNCION 2 -->
+        <set name="Viernes"><srai>VIERNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>     <!-- FUNCION 3 -->
+      </think>
+      <think><set name="topic">decision_11</set></think>
+      Pues ya tendria que ser para la semana del <get name="Lunes"/> al <get name="Viernes"/>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ si ^</pattern>
+    <template>
+      <think>
+        <set var="FIN">5</set>
+        <set var="dia_semana">Lunes</set>
+        <set var="dias_semana">Lunes Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="dia_actual"><srai>DAY</srai></set>
+        <condition var="dia_actual">
+          <li value="lunes">
+            <set name="fecha"><srai>DATE A WEEK FROM Lunes</srai></set>
+            <set name="fecha_auxiliar"><get name="fecha"/></set>
+          </li>
+          <li>
+            <set name="fecha"><srai>DATE ON Lunes</srai></set>
+            <set name="fecha_auxiliar"><get name="fecha"/></set>
+          </li>
+        </condition>
+        <set var="dias_disponibles"></set>
+        <set var="contador">2</set>
+        <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+        <set var="nuevo_mes">0</set>
+      </think>
+
+      <condition var="ocupado">
+        <li value="FIN">
+          <think><set var="vacia"><srai>VACIA <get var="dias_disponibles"/></srai></set></think>
+          <condition var="vacia">
+            <li value="TRUE">
+              No nos quedan dias esa semana, le viene bien 2 semanas
+              <think><set name="topic">si_semana_2</set></think>
+            </li>
+            <li value="FALSE">
+              El <get var="dias_disponibles"/> estan disponibles para la semana que viene, cual desea
+              <think><set name="topic">decision_9</set></think>
+            </li>
+          </condition>
+        </li>
+        <li value="FALSE">
+          <think>
+            <set var="dias_disponibles"><get var="dias_disponibles"/> <get var="dia_semana"/></set>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <condition var="nuevo_mes">
+              <li value="1">
+                <set var="num_mes"><srai>FINDITEM <srai>SELECTITEM 2 IN <get name="fecha"/></srai> IN <get var="meses"/></srai></set>
+                <set var="num_mes"><map name="successor"><get var="contador"/></map></set>
+                <set var="mes"><srai>SELECTITEM <get var="num_mes"/> IN <get var="meses"/></srai></set>
+                <set name="fecha">1 <map name="successor"><srai>SELECTITEM 2 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+              <li>
+                <set name="fecha"><map name="successor"><srai>SELECTITEM 1 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+            </condition>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+        <li value="TRUE">
+          <think>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <condition var="nuevo_mes">
+              <li value="1">
+                <set var="num_mes"><srai>FINDITEM <srai>SELECTITEM 2 IN <get name="fecha"/></srai> IN <get var="meses"/></srai></set>
+                <set var="num_mes"><map name="successor"><get var="contador"/></map></set>
+                <set var="mes"><srai>SELECTITEM <get var="num_mes"/> IN <get var="meses"/></srai></set>
+                <set name="fecha">1 <map name="successor"><srai>SELECTITEM 2 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+              <li>
+                <set name="fecha"><map name="successor"><srai>SELECTITEM 1 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+            </condition>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ vale ^</pattern>
+    <template><srai>si</srai></template>
+  </category>
+
+  <category>
+    <pattern>^ claro ^</pattern>
+    <template><srai>si</srai></template>
+  </category>
+
+  <category>
+    <pattern>^ por supuesto ^</pattern>
+    <template><srai>si</srai></template>
+  </category>
+</topic>
+
+<topic name="decision_9">
+  <!-- SEMANA SIGUIENTE, SI LE VIENE BIEN PERO LUEGO DICE QUE NO -->
+  <!-- -->
+  <category>
+    <pattern>^ no  puedo ^</pattern>
+    <template>
+      <think>
+        <set name="Lunes"><srai>LUNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>         <!-- FUNCION 2 -->
+        <set name="Viernes"><srai>VIERNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>     <!-- FUNCION 3 -->
+      </think>
+      <think><set name="topic">decision_11</set></think>
+      Pues ya tendria que ser para la semana del <get name="Lunes"/> al <get name="Viernes"/>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ningun ^</pattern>
+    <template>
+      <think>
+        <set name="Lunes"><srai>LUNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>         <!-- FUNCION 2 -->
+        <set name="Viernes"><srai>VIERNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>     <!-- FUNCION 3 -->
+      </think>
+      <think><set name="topic">decision_11</set></think>
+      Pues ya tendria que ser para la semana del <get name="Lunes"/> al <get name="Viernes"/>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ninguno ^</pattern>
+    <template>
+      <think>
+        <set name="Lunes"><srai>LUNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>         <!-- FUNCION 2 -->
+        <set name="Viernes"><srai>VIERNES EN 2 SEMANAS <srai>DATE ON Domingo</srai></srai></set>     <!-- FUNCION 3 -->
+      </think>
+      <think><set name="topic">decision_11</set></think>
+      Pues ya tendria que ser para la semana del <get name="Lunes"/> al <get name="Viernes"/>
+    </template>
+  </category>
+
+  <!-- ELECCION DE DIA DE LA SIGUIENTE SEMANA -->
+  <!-- -->
+  <category>
+    <pattern>^ <set>weekday_es</set></pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha_auxiliar"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai> <srai>SELECTITEM 3 IN <get name="fecha_auxiliar"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita para el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> por la *</pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha_auxiliar"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai> <srai>SELECTITEM 3 IN <get name="fecha_auxiliar"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> por la <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> a las *</pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha_auxiliar"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai> <srai>SELECTITEM 3 IN <get name="fecha_auxiliar"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> a las <star index="3"/></srai>
+    </template>
+  </category>
+</topic>
+
+<topic name="decision_10">
+  <!-- ELECCION DE DIA EN 2 SEMANAS -->
+  <!-- -->
+  <category>
+    <pattern>^ <set>weekday_es</set></pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha_auxiliar"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai> <srai>SELECTITEM 3 IN <get name="fecha_auxiliar"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita para el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> por la *</pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha_auxiliar"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai> <srai>SELECTITEM 3 IN <get name="fecha_auxiliar"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> por la <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> a las *</pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha_auxiliar"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha_auxiliar"/></srai> <srai>SELECTITEM 3 IN <get name="fecha_auxiliar"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> a las <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ninguno ^</pattern>
+    <template>
+      Para que semana desea entonces la cita
+      <think><set name="topic">decision_13</set></think>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ningun dia ^</pattern>
+    <template>
+      Para que semana desea entonces la cita
+      <think><set name="topic">decision_13</set></think>
+    </template>
+  </category>
+</topic>
+
+<topic name="decision_11">
+  <!-- EN DOS SEMANAS SI PUEDE -->
+  <!-- -->
+  <category>
+    <pattern>^ vale ^</pattern>
+    <template>
+      <think>
+        <set var="FIN">5</set>
+        <set var="dia_semana">Lunes</set>
+        <set var="dias_semana">Lunes Martes Miercoles Jueves Viernes Sabado</set>
+        <set name="fecha"><get name="Lunes"/></set>
+        <set var="dias_disponibles"></set>
+        <set var="contador">2</set>
+        <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/> 2020</srai></set>
+        <set var="nuevo_mes">0</set>
+      </think>
+
+      <condition var="ocupado">
+        <li value="FIN">
+          <think><set var="vacia"><srai>VACIA <get var="dias_disponibles"/></srai></set></think>
+          <condition var="vacia">
+            <li value="TRUE">
+              No nos quedan dias esa semana, para que semana desea la cita entonces
+              <think><set name="topic">decision_13</set></think>
+            </li>
+            <li value="FALSE">
+              El <get var="dias_disponibles"/> estan disponibles en 2 semanas, cual desea
+              <think><set name="topic">decision_10</set></think>
+            </li>
+          </condition>
+        </li>
+        <li value="FALSE">
+          <think>
+            <set var="dias_disponibles"><get var="dias_disponibles"/> <get var="dia_semana"/></set>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <condition var="nuevo_mes">
+              <li value="1">
+                <set var="num_mes"><srai>FINDITEM <srai>SELECTITEM 2 IN <get name="fecha"/></srai> IN <get var="meses"/></srai></set>
+                <set var="num_mes"><map name="successor"><get var="contador"/></map></set>
+                <set var="mes"><srai>SELECTITEM <get var="num_mes"/> IN <get var="meses"/></srai></set>
+                <set name="fecha">01 <map name="successor"><srai>SELECTITEM 2 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+              <li>
+                <set name="fecha"><map name="days_transform"><map name="successor"><srai>SELECTITEM 1 IN <get name="fecha"/></srai></map></map> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+            </condition>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+        <li value="TRUE">
+          <think>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <condition var="nuevo_mes">
+              <li value="1">
+                <set var="num_mes"><srai>FINDITEM <srai>SELECTITEM 2 IN <get name="fecha"/></srai> IN <get var="meses"/></srai></set>
+                <set var="num_mes"><map name="successor"><get var="contador"/></map></set>
+                <set var="mes"><srai>SELECTITEM <get var="num_mes"/> IN <get var="meses"/></srai></set>
+                <set name="fecha">01 <map name="successor"><srai>SELECTITEM 2 IN <get name="fecha"/></srai></map> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+              <li>
+                <set name="fecha"><map name="days_transform"><map name="successor"><srai>SELECTITEM 1 IN <get name="fecha"/></srai></map></map> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+              </li>
+            </condition>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ si ^</pattern>
+    <template><srai>vale</srai></template>
+  </category>
+
+  <category>
+    <pattern>^ de acuerdo ^</pattern>
+    <template><srai>vale</srai></template>
+  </category>
+
+  <category>
+    <pattern>^ no (puedo) ^</pattern>
+    <template>
+      Para que semana desea entonces la cita
+      <think><set name="topic">decision_13</set></think>
+    </template>
+  </category>
+  <!-- ARREGLAR -->
+</topic>
+
+<topic name="decision_12">
+  <category>
+    <pattern>^ <set>weekday_es</set></pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita para el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> <srai>SELECTITEM 2 IN <get name="fecha"/></srai></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> por la *</pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> por la <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ <set>weekday_es</set> a las *</pattern>
+    <template>
+      <think>
+        <set var="dias_semana">Martes Miercoles Jueves Viernes Sabado</set>
+        <set var="contador_dia"><srai>FINDITEM <star index="2"/> IN <get var="dias_semana"/></srai></set>
+        <set name="fecha"><srai>SUMA <srai>SELECTITEM 1 IN <get name="fecha"/></srai> <get var="contador_dia"/></srai> <srai>SELECTITEM 2 IN <get name="fecha"/></srai> <srai>SELECTITEM 3 IN <get name="fecha"/></srai></set>
+      </think>
+      <think><set name="topic">unknow</set></think>
+      <srai>cita el <srai>SELECTITEM 1 IN <get name="fecha"/></srai> de <srai>SELECTITEM 2 IN <get name="fecha"/></srai> a las <star index="3"/></srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>^ ninguno ^</pattern>
+    <template>De acuerdo, gracias</template>
+  </category>
+
+  <category>
+    <pattern>^ ningun dia ^</pattern>
+    <template>De acuerdo, gracias</template>
+  </category>
+</topic>
+
+<topic name="decision_13">
+  <category>
+    <pattern>^ para la semana del <set>number</set> (de) <set>month_es</set> (de) (<set>number</set>) al <set>number</set> (de) <set>month_es</set> (de) (<set>number</set>)</pattern>
+    <template>
+      <think>
+        <set var="FIN">5</set>
+        <set var="dia_semana">Lunes</set>
+        <set var="dias_semana">Lunes Martes Miercoles Jueves Viernes Sabado</set>
+        <set name="fecha"><map name="days_transform"><star index="2"/></map> <star index="3"/> 20</set>
+        <set var="dias_disponibles"></set>
+        <set var="contador">2</set>
+        <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+        <set var="nuevo_mes">0</set>
+        <set var="fecha_auxiliar"><get name="fecha"/></set>
+      </think>
+
+      <condition var="ocupado">
+        <li value="FIN">
+          <think><set var="vacia"><srai>VACIA <get var="dias_disponibles"/></srai></set></think>
+          <condition var="vacia">
+            <li value="TRUE">
+              No nos quedan dias esa semana lo siento
+            </li>
+            <li value="FALSE">
+              El <get var="dias_disponibles"/> estan disponibles en esa semana, cual desea
+              <think><set name="topic">decision_12</set></think>
+            </li>
+          </condition>
+        </li>
+        <li value="FALSE">
+          <think>
+            <set var="dias_disponibles"><get var="dias_disponibles"/> <get var="dia_semana"/></set>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <set name="fecha"><srai>TOMORROWDATE <get name="fecha"/></srai></set>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+        <li value="TRUE">
+          <think>
+            <set var="dia_semana"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+            <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+            <set name="fecha"><srai>TOMORROWDATE <get name="fecha"/></srai></set>
+            <set var="ocupado"><srai>IS BUSY DAY <get name="fecha"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            <condition var="dia_semana">
+              <li value="Sabado">
+                <set var="ocupado">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+      </condition>
+      <think><set name="fecha"><get var="fecha_auxiliar"/></set></think>
+    </template>
+  </category>
+</topic>
+
+<!-- FUNCION PARA VER SI EL DIA ESTÁ COMPLETO -->
+<!-- -->
+<category>
+  <pattern>IS BUSY DAY <set>number</set> <set>month_es</set> <set>number</set></pattern>
+  <template>
+    <think>
+      <!-- Definiendo variables globales -->
+      <set var="horas">09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00</set>
+      <set name="fecha"><map name="days_transform"><star/></map>-<map name="month_index_ES"><star index="2"/></map>-20</set>
+      <!-- Inicializando variables del bucle -->
+      <set var="contador">1</set>
+      <set name="hora">08:00</set>
+      <set var="ocupada"><srai>IS BUSY DAY <get name="fecha"/> AT <get name="hora"/></srai></set>         <!-- Comprueba si la primera hora del dia eta ocupada y añade el resultado a la variable ocupada -->
+      <!-- Bucle -->
+    </think>
+      <condition var="ocupada">
+        <li value="FIN">TRUE</li>
+        <li value="FALSE">FALSE</li>
+        <li value="TRUE">
+          <think>
+            <set name="hora"><srai>SELECTITEM <get var="contador"/> IN <get var="horas"/></srai></set>    <!-- En hora coge los elementos del vector horas para probar una a una -->
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>                   <!-- Incrementa el contador para recorrer las horas -->
+            <set var="ocupada"><srai>IS BUSY DAY <get name="fecha"/> AT <get name="hora"/></srai></set>    <!-- Comprueba si la hora pasada esta ocupada -->
+            <condition name="hora">
+              <li value="21:00">
+                <set var="ocupada">FIN</set>
+              </li>
+            </condition>
+          </think>
+          <loop/>
+        </li>
+      </condition>
+      <think><set name="fecha"><star/> <star index="2"/> <star index="3"/></set></think>
+  </template>
+</category>
+
+<!-- FUNCION 2 -->
+<!-- -->
+<category>
+  <pattern>LUNES EN 2 SEMANAS <set>number</set> <set>month_es</set> *</pattern>
+  <template>
+    <think>
+      <set var="fecha_actual"><star/> <star index="2"/></set>
+      <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+      <set var="meses_numero_dias">31 29 31 30 31 30 31 31 30 31 30 31</set>
+      <set var="i_mes_actual"><srai>FINDITEM <srai>SELECTITEM 2 IN <get var="fecha_actual"/></srai> IN <get var="meses"/></srai></set>
+      <set var="dia"><srai>SELECTITEM 1 IN <get var="fecha_actual"/></srai></set>
+      <set var="contador">0</set>
+    </think>
+    <condition var="contador">
+      <li value="8">
+        <get var="fecha_actual"/>
+      </li>
+      <li>
+        <condition var="dia">
+          <li><value><srai>SELECTITEM <get var="i_mes_actual"/> IN <get var="meses_numero_dias"/></srai></value>
+            <think>
+              <set var="i_mes_actual"><map name="successor"><get var="i_mes_actual"/></map></set>
+              <set var="dia">1</set>
+              <set var="fecha_actual">1 <srai>SELECTITEM <get var="i_mes_actual"/> IN <get var="meses"/></srai></set>
+              <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            </think>
+          </li>
+          <li>
+            <think>
+              <set var="dia"><map name="successor"><get var="dia"/></map></set>
+              <set var="fecha_actual"><get var="dia"/> <srai>SELECTITEM <get var="i_mes_actual"/> IN <get var="meses"/></srai></set>
+              <set var="contador"><map name="successor"><get var="contador"/></map></set>
+            </think>
+          </li>
+        </condition>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<!-- FUNCION 3 -->
+<!-- -->
+<category>
+ <pattern>VIERNES EN 2 SEMANAS <set>number</set> <set>month_es</set> *</pattern>
+ <template>
+   <think>
+     <set var="fecha_actual"><star/> <star index="2"/></set>
+     <set var="meses">Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre</set>
+     <set var="meses_numero_dias">31 29 31 30 31 30 31 31 30 31 30 31</set>
+     <set var="i_mes_actual"><srai>FINDITEM <srai>SELECTITEM 2 IN <get var="fecha_actual"/></srai> IN <get var="meses"/></srai></set>
+     <set var="dia"><srai>SELECTITEM 1 IN <get var="fecha_actual"/></srai></set>
+     <set var="contador">0</set>
+   </think>
+   <condition var="contador">
+     <li value="12">
+       <get var="fecha_actual"/>
+     </li>
+     <li>
+       <condition var="dia">
+         <li><value><srai>SELECTITEM <get var="i_mes_actual"/> IN <get var="meses_numero_dias"/></srai></value>
+          <think>
+            <set var="i_mes_actual"><map name="successor"><get var="i_mes_actual"/></map></set>
+            <set var="dia">1</set>
+            <set var="fecha_actual">1 <srai>SELECTITEM <get var="i_mes_actual"/> IN <get var="meses"/></srai></set>
+            <set var="contador"><map name="successor"><get var="contador"/></map></set>
+          </think>
+         </li>
+         <li>
+           <think>
+             <set var="dia"><map name="successor"><get var="dia"/></map></set>
+             <set var="fecha_actual"><get var="dia"/> <srai>SELECTITEM <get var="i_mes_actual"/> IN <get var="meses"/></srai></set>
+             <set var="contador"><map name="successor"><get var="contador"/></map></set>
+           </think>
+         </li>
+       </condition>
+       <loop/>
+     </li>
+   </condition>
+ </template>
+</category>
+
+<!-- FUNCION PARA VER SI LA LISTA DE DIAS DE SEMANA ESTÁ VACIA -->
+<category>
+  <pattern>VACIA ^</pattern>
+  <template>
+    <think>
+      <set var="dias_semana">Martes Miercoles Jueves Viernes FIN</set>
+      <set var="vacia">TRUE</set>
+      <set var="dia">Lunes</set>
+      <set var="esta"><srai>FINDITEM <get var="dia"/> IN <star/></srai></set>
+      <set var="contador">1</set>
+    </think>
+    <condition var="dia">
+      <li value="FIN">
+        <get var="vacia"/>
+      </li>
+      <li>
+        <condition var="esta">
+          <li value="0"></li>
+          <li>
+            <think><set var="vacia">FALSE</set></think>
+          </li>
+        </condition>
+        <think>
+          <set var="dia"><srai>SELECTITEM <get var="contador"/> IN <get var="dias_semana"/></srai></set>
+          <set var="contador"><map name="successor"><get var="contador"/></map></set>
+          <set var="esta"><srai>FINDITEM <get var="dia"/> IN <star/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>NUEVO MES *</pattern>
+  <template>
+    JEJE
+      <set var="nuevo"><srai>TOMORROWDATE <star/></srai></set>
+
+    <condition var="nuevo">
+      <li value="1">
+        FALSE
+      </li>
+      <li>
+        <get var="nuevo"/>
+      </li>
+    </condition>
+  </template>
+</category>
+</aiml>
